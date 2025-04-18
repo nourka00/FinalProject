@@ -7,8 +7,15 @@ const User = sequelize.define(
     name: DataTypes.STRING,
     email: { type: DataTypes.STRING, unique: true },
     password: DataTypes.STRING,
+    role: {
+      type: DataTypes.ENUM("student", "admin"),
+      defaultValue: "student",
+    },
     display_name: DataTypes.STRING,
-    created_at: DataTypes.DATE,
+   created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+    },
     updated_at: DataTypes.DATE,
   },
   {

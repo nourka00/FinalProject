@@ -2,6 +2,25 @@ import { User } from "../models/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+// In your authController.js
+export const registerAdmin = async (req, res) => {
+  try {
+    const { name, email, password, display_name } = req.body;
+    
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      display_name,
+      role: 'admin', // Explicitly set as admin
+    });
+    
+    res.status(201).json({ message: "Admin registered", user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 export const register = async (req, res) => {
   try {
@@ -38,10 +57,14 @@ export const login = async (req, res) => {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ message: "Invalid password" });
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
-
+    // const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+    //   expiresIn: "1d",
+    // });
+const token = jwt.sign(
+  { userId: user.id, name: user.name, role: user.role, email: user.email },
+  process.env.JWT_SECRET,
+  { expiresIn: "1d" }
+);
     res.json({ token, user });
   } catch (err) {
     res.status(500).json({ error: err.message });

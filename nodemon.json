@@ -2,7 +2,7 @@
   "execMap": {
     "js": "node --experimental-modules"
   },
-  "watch": ["server.js", "models/", "config/"],
+  "watch": ["server.js", "controllers/*", "middleware/*", "models/*", "routes/*"],
   "ext": "js,json",
   "exec": "node --experimental-modules server.js",
   "delay": "1000",

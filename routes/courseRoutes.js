@@ -3,13 +3,23 @@ import {
   getCourses,
   getCourseById,
   createCourse,
+  getCourseMaterials,
 } from "../controllers/courseController.js";
-import { verifyToken } from "../middleware/authMiddleware.js";
+import {
+  verifyToken,
+  protectAdmin,
+  checkEnrollment,
+} from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.get("/", getCourses);
 router.get("/:id", getCourseById);
-router.post("/", verifyToken, createCourse); // Protected: only logged-in users
-
+router.post("/", verifyToken, protectAdmin, createCourse); // Protected: only logged-in users
+router.get(
+  "/:id/materials", // Matches /api/courses/123/materials
+  verifyToken,
+  checkEnrollment,
+  getCourseMaterials
+);
 export default router;
