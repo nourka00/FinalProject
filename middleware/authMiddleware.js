@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
+import { Purchase } from "../models/index.js";
 
 
 export function protectAdmin(req, res, next) {
@@ -29,6 +30,7 @@ export const verifyToken = (req, res, next) => {
       role: decoded.role,
       name: decoded.name,
     };
+  req.userId = decoded.userId;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
@@ -36,21 +38,23 @@ export const verifyToken = (req, res, next) => {
 };
  export const checkEnrollment = async (req, res, next) => {
    try {
-     // Skip check for admins
      if (req.user.role === "admin") return next();
 
-     const isEnrolled = await Purchase.findOne({
+     const validPurchase = await Purchase.findOne({
        where: {
          user_id: req.user.id,
-         course_id: req.params.id, // Works for both :id and :courseId
+         course_id: req.params.id,
+         status: "completed", // Only allow if payment completed
        },
      });
 
-     if (!isEnrolled) {
-       return res.status(403).json({ message: "Not enrolled in this course" });
+     if (!validPurchase) {
+       return res.status(403).json({
+         message: "Not enrolled or payment pending",
+       });
      }
      next();
    } catch (error) {
      res.status(500).json({ message: "Enrollment check failed" });
    }
- };
+};

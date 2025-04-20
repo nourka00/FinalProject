@@ -2,12 +2,12 @@
   "execMap": {
     "js": "node --experimental-modules"
   },
-  "watch": ["server.js", "controllers/*", "middleware/*", "models/*", "routes/*"],
+  "watch": ["server.js", "config/*","controllers/*", "middleware/*", "models/*", "routes/*"],
   "ext": "js,json",
   "exec": "node --experimental-modules server.js",
   "delay": "1000",
   "env": {
     "NODE_ENV": "development"
   },
-  "ignore": ["node_modules/"]
+  "ignore": ["node_modules/",".env"]
 }

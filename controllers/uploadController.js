@@ -1,10 +1,12 @@
 import path from "path";
-import CourseMaterial from "../models/CourseMaterial.js";
+import CourseMaterial from "../models/courseMaterial.js";
 import { uploadPDF } from "../utils/uploadToSupabase.js";
 import { fileURLToPath } from "url";
-
+import { Course } from "../models/index.js";
+import supabase from "../config/supabase.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 export async function uploadCourseMaterial(req, res) {
   try {
     const file = req.file; // File is now in memory (Buffer)
@@ -58,3 +60,31 @@ export async function uploadCourseMaterial(req, res) {
   }
 
 }
+
+export const deleteMaterial = async (req, res) => {
+  try {
+    const { id } = req.params; // Material ID
+
+    // Get material record
+    const material = await CourseMaterial.findByPk(id);
+    if (!material)
+      return res.status(404).json({ message: "Material not found" });
+
+    // Extract file path from URL (e.g., "course-123/file.pdf")
+    const filePath = material.file_url.split("/public/")[1];
+
+    // Delete from Supabase
+    const { error: supabaseError } = await supabase.storage
+      .from("course-materials")
+      .remove([filePath]);
+
+    if (supabaseError) throw supabaseError;
+
+    // Delete database record
+    await material.destroy();
+
+    res.json({ message: "File deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Deletion failed", error: error.message });
+  }
+};

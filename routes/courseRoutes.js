@@ -1,16 +1,18 @@
 import express from "express";
+
+
 import {
   getCourses,
   getCourseById,
   createCourse,
   getCourseMaterials,
+  deleteCourse,
 } from "../controllers/courseController.js";
 import {
   verifyToken,
   protectAdmin,
   checkEnrollment,
 } from "../middleware/authMiddleware.js";
-
 const router = express.Router();
 
 router.get("/", getCourses);
@@ -22,4 +24,13 @@ router.get(
   checkEnrollment,
   getCourseMaterials
 );
+router.delete(
+  "/:id",
+  verifyToken,
+  protectAdmin,
+  deleteCourse
+);
+
 export default router;
+
+

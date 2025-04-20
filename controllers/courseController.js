@@ -73,3 +73,37 @@ export const getCourseMaterials = async (req, res) => {
     });
   }
 };
+export const deleteCourse = async (req, res) => {
+  try {
+    const course = await Course.findByPk(req.params.id);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    // 1. Delete all related materials first
+    const materials = await CourseMaterial.findAll({
+      where: { course_id: req.params.id },
+    });
+
+    // Delete from Supabase
+    const filePaths = materials.map((m) => m.file_url.split("/public/")[1]);
+
+    if (filePaths.length > 0) {
+      const { error } = await supabase.storage
+        .from("course-materials")
+        .remove(filePaths);
+      if (error) throw error;
+    }
+
+    // 2. Delete the course
+    await course.destroy();
+
+    res.json({ message: "Course and all materials deleted" });
+  } catch (error) {
+    console.error("Delete error:", error);
+    res.status(500).json({
+      message: "Deletion failed",
+      error: error.message,
+    });
+  }
+};

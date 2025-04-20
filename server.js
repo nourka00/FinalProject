@@ -8,7 +8,7 @@ import courseRoutes from "./routes/courseRoutes.js";
 import materialRoutes from "./routes/materialRoutes.js";
 import purchaseRoutes from "./routes/purchaseRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
-
+import supabase from "./config/supabase.js";
 import dotenv from "dotenv";
 
 const app = express();
@@ -21,7 +21,18 @@ app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/materials", materialRoutes);
 app.use("/api/purchases", purchaseRoutes);
-
+app.use("/api/upload-material", uploadRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/supabase", (req, res) => {
+  const { bucketName } = req.query;
+  supabase.storage
+    .from(bucketName)
+    .list("")
+    .then(({ data, error }) => {
+      if (error) return res.status(500).json({ error: error.message });
+      res.json(data);
+    });
+}); 
 app.get("/", (req, res) => res.send("API running"));
 // Sync DB
 sequelize.sync({ alter: true, logging: false }).then(() => {
