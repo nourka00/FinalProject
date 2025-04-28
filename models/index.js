@@ -3,11 +3,8 @@ import User from "./user.js";
 import Course from "./course.js";
 import Purchase from "./purchase.js";
 import CourseMaterial from "./courseMaterial.js";
-import Skill from "./skill.js";
-import CourseSkill from "./courseSkill.js";
 import Review from "./review.js";
 import CourseDetail from "./courseDetail.js";
-import CourseRelation from "./courseRelation.js";
 import MaterialAccessLog from "./materialAccessLog.js";
 
 
@@ -28,9 +25,6 @@ Review.belongsTo(User, { foreignKey: "user_id" });
 Course.hasOne(CourseDetail, { foreignKey: "course_id" });
 CourseDetail.belongsTo(Course, { foreignKey: "course_id" });
 
-Course.belongsToMany(Skill, { through: CourseSkill, foreignKey: "course_id" });
-Skill.belongsToMany(Course, { through: CourseSkill, foreignKey: "skill_id" });
-
 User.hasMany(MaterialAccessLog, { foreignKey: "user_id" });
 CourseMaterial.hasMany(MaterialAccessLog, { foreignKey: "material_id" });
 
@@ -40,10 +34,7 @@ export {
   Course,
   Purchase,
   CourseMaterial,
-  Skill,
-  CourseSkill,
   Review,
   CourseDetail,
-  CourseRelation,
   MaterialAccessLog,
 };

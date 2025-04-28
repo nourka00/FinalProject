@@ -11,6 +11,11 @@ const Course = sequelize.define(
     price: DataTypes.DECIMAL,
     schedule: DataTypes.ENUM("month", "2 months", "3 months"),
     level: DataTypes.ENUM("Beginner", "Intermediate", "Mixed"),
+    skills: {
+  type: DataTypes.ARRAY(DataTypes.STRING),
+  allowNull: true,
+},
+
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
   },

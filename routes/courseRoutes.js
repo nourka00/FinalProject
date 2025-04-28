@@ -7,6 +7,8 @@ import {
   createCourse,
   getCourseMaterials,
   deleteCourse,
+  updateCourse,
+  getRelatedCourses
 } from "../controllers/courseController.js";
 import {
   verifyToken,
@@ -30,7 +32,8 @@ router.delete(
   protectAdmin,
   deleteCourse
 );
-
+router.put("/:id", protectAdmin, updateCourse); 
+router.get("/:id/related", getRelatedCourses);
 export default router;
 
 
