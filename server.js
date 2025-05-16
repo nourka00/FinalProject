@@ -1,4 +1,3 @@
-process.env.ESM_DISABLE_CACHE = "1";
 import express from "express";
 import cors from "cors";
 import { sequelize } from "./models/index.js";
@@ -10,12 +9,20 @@ import purchaseRoutes from "./routes/purchaseRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import supabase from "./config/supabase.js";
-import dotenv from "dotenv";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+process.env.ESM_DISABLE_CACHE = "1";
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true, 
+  })
+);
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(cookieParser());
+
 
 app.use("/api", uploadRoutes);
 app.use("/api/users", userRoutes);

@@ -14,7 +14,11 @@ const Course = sequelize.define(
     skills: {
   type: DataTypes.ARRAY(DataTypes.STRING),
   allowNull: true,
-},
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
 
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
