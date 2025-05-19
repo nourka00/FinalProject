@@ -70,3 +70,15 @@ const token = jwt.sign(
     res.status(500).json({ error: err.message });
   }
 };
+// In your authController.js
+export const getCurrentUser = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    // User is attached to request by verifyToken middleware
+    res.json({ user: req.user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
