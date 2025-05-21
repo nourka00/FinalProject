@@ -12,9 +12,10 @@ const User = sequelize.define(
       defaultValue: "student",
     },
     display_name: DataTypes.STRING,
-   created_at: {
+    image_path: DataTypes.STRING,
+    created_at: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
+      defaultValue: DataTypes.NOW,
     },
     updated_at: DataTypes.DATE,
   },
