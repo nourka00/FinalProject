@@ -3,6 +3,7 @@ import {
   createPurchase,
   getMyPurchases,
   updatePurchaseStatus,
+  getAllPurchases
 } from "../controllers/purchaseController.js";
 import { verifyToken, protectAdmin } from "../middleware/authMiddleware.js";
 
@@ -16,4 +17,6 @@ router.patch(
   protectAdmin,
   updatePurchaseStatus
 );
+router.get("/", verifyToken, protectAdmin, getAllPurchases);
+
 export default router;
