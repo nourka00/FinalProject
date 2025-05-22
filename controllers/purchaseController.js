@@ -51,3 +51,11 @@ export const updatePurchaseStatus = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+export const getAllPurchases = async (req, res) => {
+  try {
+    const purchases = await Purchase.findAll({ include: [Course] });
+    res.json(purchases);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
