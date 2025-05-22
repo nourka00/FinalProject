@@ -57,9 +57,6 @@ export const login = async (req, res) => {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ message: "Invalid password" });
 
-    // const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-    //   expiresIn: "1d",
-    // });
 const token = jwt.sign(
   { userId: user.id, name: user.name, role: user.role, email: user.email },
   process.env.JWT_SECRET,
@@ -70,14 +67,26 @@ const token = jwt.sign(
     res.status(500).json({ error: err.message });
   }
 };
-// In your authController.js
+
 export const getCurrentUser = async (req, res) => {
   try {
-    if (!req.user) {
-      return res.status(401).json({ message: "Unauthorized" });
+    const user = await User.findByPk(req.userId, {
+      attributes: { exclude: ['password'] }, // Never return password
+      raw: false // Get full model instance
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-    // User is attached to request by verifyToken middleware
-    res.json({ user: req.user });
+
+    // Add cache busting for image URL if exists
+    const userJson = user.toJSON();
+    if (userJson.image_path) {
+      userJson.image_path = `${userJson.image_path.split('?')[0]}?${Date.now()}`;
+    }
+
+    res.setHeader('Cache-Control', 'no-store');
+    res.json({ user: userJson });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
